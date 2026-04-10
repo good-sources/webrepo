@@ -7,6 +7,6 @@
     public interface ICollectionService : IDisposable
     {
         IEnumerable<Collection> Get();
-        int Add(Collection collection);
+        Guid Add(Collection collection);
     }
 }

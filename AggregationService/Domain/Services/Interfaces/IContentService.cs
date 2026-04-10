@@ -6,6 +6,6 @@
 
     public interface IContentService : IDisposable
     {       
-        IEnumerable<Content> GetByCollection(int collectionId);
+        IEnumerable<Content> GetByCollection(Guid collectionId);
     }
 }

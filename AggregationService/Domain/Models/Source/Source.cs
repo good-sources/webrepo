@@ -23,7 +23,7 @@
         public DateTime? Expires { get; set; }
 
         [ForeignKey("Collection")]
-        public int CollectionId { get; set; }
+        public Guid CollectionId { get; set; }
 
         [JsonIgnore]
         public Collection Collection { get; set; }

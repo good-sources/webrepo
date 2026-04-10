@@ -1,5 +1,6 @@
 ﻿namespace AggregationService.Domain.Services
 {    
+    using System;
     using System.Linq;
     using System.Data.Entity;
     using System.Collections.Generic;
@@ -11,7 +12,7 @@
             base(new AggregationServiceContext())
         { }
 
-        public IEnumerable<Content> GetByCollection(int collectionId)
+        public IEnumerable<Content> GetByCollection(Guid collectionId)
         {
             IEnumerable<Source> sources = Read<Source>()
                 .Include(s => s.Contents)

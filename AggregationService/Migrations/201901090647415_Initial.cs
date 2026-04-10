@@ -11,7 +11,7 @@ namespace AggregationService.Migrations
                 "dbo.Collections",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
+                        Id = c.Guid(nullable: false, identity: true),
                         Name = c.String(nullable: false, maxLength: 30),
                     })
                 .PrimaryKey(t => t.Id);
@@ -24,7 +24,7 @@ namespace AggregationService.Migrations
                         Uri = c.String(nullable: false, maxLength: 50),
                         LastlyUpdated = c.DateTime(),
                         Expires = c.DateTime(),
-                        CollectionId = c.Int(nullable: false),
+                        CollectionId = c.Guid(nullable: false),
                         Title = c.String(nullable: false, maxLength: 100),
                         Description = c.String(nullable: false, maxLength: 1000),
                     })

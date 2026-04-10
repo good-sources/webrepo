@@ -18,8 +18,8 @@
             Service = service;
         }
 
-        [Route("bycollection/{id:min(1)}")]
-        public IHttpActionResult GetByCollection(int id)
+        [Route("bycollection/{id:guid}")]
+        public IHttpActionResult GetByCollection(Guid id)
         {
             try
             {
