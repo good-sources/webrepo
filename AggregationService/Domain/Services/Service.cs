@@ -4,7 +4,7 @@
     using System.Data.Entity;
     using System.Collections.Generic;
 
-    public abstract class Service<T> where T : class
+    public abstract class Service<T> : IDisposable where T : class
     {
         private DbContext _context;
 
@@ -12,88 +12,41 @@
 
         protected T Create(T obj)
         {
-            try
-            {
-                _context.Set<T>().Add(obj);
-                _context.SaveChanges();
+            _context.Set<T>().Add(obj);
+            _context.SaveChanges();
 
-                return obj;
-            }
-            catch
-            {
-                throw;
-            }
+            return obj;
         }
 
         protected IEnumerable<T> CreateRange(IEnumerable<T> rng)
         {
-            try
-            {
-                _context.Set<T>().AddRange(rng);
-                _context.SaveChanges();
+            _context.Set<T>().AddRange(rng);
+            _context.SaveChanges();
 
-                return rng;
-            }
-            catch
-            {
-                throw;
-            }
+            return rng;
         }
 
         protected IEnumerable<U> CreateRange<U>(IEnumerable<U> rng) where U : class
         {
-            try
-            {
-                _context.Set<U>().AddRange(rng);
-                _context.SaveChanges();
+            _context.Set<U>().AddRange(rng);
+            _context.SaveChanges();
 
-                return rng;
-            }
-            catch
-            {
-                throw;
-            }
+            return rng;
         }
 
         protected DbSet<T> Read() => _context.Set<T>();
 
         protected DbSet<U> Read<U>() where U : class => _context.Set<U>();
 
-        /*protected void Update(T obj)
-        {
-            _context.Set<T>().Attach(obj);
-            _context.SaveChanges();
-        }*/
-
-        /*protected void Update<U>(U obj) where U :class
-        {
-            _context.Set<U>().Attach(obj);
-            _context.SaveChanges();
-        }*/
-
         protected void DeleteRange<U>(IEnumerable<U> rng) where U : class
         {
-            try
-            {
-                _context.Set<U>().RemoveRange(rng);
-                _context.SaveChanges();
-            }
-            catch
-            {
-                throw;
-            }
+            _context.Set<U>().RemoveRange(rng);
+            _context.SaveChanges();
         }
 
         protected void CommitChanges()
         {
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch
-            {
-                throw;
-            }
+            _context.SaveChanges();
         }
 
         public void Dispose()

@@ -25,10 +25,7 @@
             {
                 using (Service)
                 {
-                    var config = new HttpConfiguration();
-                    config.Formatters.JsonFormatter.SerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
-
-                    return Json(Service.GetByCollection(id), config.Formatters.JsonFormatter.SerializerSettings);
+                    return Json(Service.GetByCollection(id));
                 }
             }
             catch (Exception ex)

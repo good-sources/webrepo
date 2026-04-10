@@ -9,8 +9,9 @@
         public virtual DbSet<Source> Sources { get; set; }
         public virtual DbSet<Content> Contents { get; set; }
 
-        public AggregationServiceContext() : base("Strorage")
+        public AggregationServiceContext() : base("Storage")
         {
+            Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;
         }
 

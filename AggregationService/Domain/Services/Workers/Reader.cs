@@ -21,6 +21,7 @@
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 });
 
+            _client.Timeout = TimeSpan.FromSeconds(30);
             _client.DefaultRequestHeaders.ConnectionClose = true;
             _client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
             _client.DefaultRequestHeaders.AcceptEncoding.Add(new StringWithQualityHeaderValue("deflate"));
@@ -28,13 +29,21 @@
             _parser = new Parser();
         }
 
+        private static void ValidateUri(string uri)
+        {
+            if (!System.Uri.TryCreate(uri, UriKind.Absolute, out Uri parsedUri)
+                || (parsedUri.Scheme != System.Uri.UriSchemeHttp && parsedUri.Scheme != System.Uri.UriSchemeHttps))
+            {
+                throw new ArgumentException("Only HTTP and HTTPS URIs are allowed.");
+            }
+        }
+
         public static void Pull(Source source, out IEnumerable<Content> contents)
         {
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, source.Uri);
-
-            using (var response = _client.SendAsync(request))
+            ValidateUri(source.Uri);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, source.Uri))
+            using (HttpResponseMessage message = _client.SendAsync(request).Result)
             {
-                HttpResponseMessage message = response.Result;
                 ValidateSource(source, message);
                 contents = _parser.Parse(source, message.Content.ReadAsStringAsync().Result);
             }
@@ -46,22 +55,23 @@
 
             if (!source.Expires.HasValue || source.Expires <= DateTime.Now)
             {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, source.Uri);
-                request.Headers.IfModifiedSince = source.LastlyModified;
-
-                using (var response = _client.SendAsync(request))
+                ValidateUri(source.Uri);
+                using (var request = new HttpRequestMessage(HttpMethod.Get, source.Uri))
                 {
-                    HttpResponseMessage message = response.Result;
+                    request.Headers.IfModifiedSince = source.LastlyModified;
 
-                    if (message.StatusCode == HttpStatusCode.NotModified || message.IsSuccessStatusCode)
+                    using (HttpResponseMessage message = _client.SendAsync(request).Result)
                     {
-                        ValidateSource(source, message);
+                        if (message.StatusCode == HttpStatusCode.NotModified || message.IsSuccessStatusCode)
+                        {
+                            ValidateSource(source, message);
 
-                        if (message.IsSuccessStatusCode)
-                            validContents = _parser.Parse(source, message.Content.ReadAsStringAsync().Result);
+                            if (message.IsSuccessStatusCode)
+                                validContents = _parser.Parse(source, message.Content.ReadAsStringAsync().Result);
+                        }
+                        else
+                            throw new HttpResponseException(message.StatusCode);
                     }
-                    else
-                        throw new HttpResponseException(message.StatusCode);
                 }
             }
         }

@@ -22,6 +22,7 @@
             List<Content> contents = new List<Content>();
 
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             doc.LoadXml(document);
 
             XmlNode root = doc.DocumentElement,

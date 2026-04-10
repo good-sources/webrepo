@@ -13,24 +13,17 @@
 
         public Guid Add(Source source)
         {
-            try
+            Reader.Pull(source, out IEnumerable<Content> contents);
+
+            Create(source);
+
+            if (source.Id != Guid.Empty && contents.Any())
             {
-                Reader.Pull(source, out IEnumerable<Content> contents);
-
-                Create(source);
-
-                if (source.Id != Guid.Empty && contents.Count() > 0)
-                {
-                    contents.ToList().ForEach(content => content.SourceId = source.Id);
-                    CreateRange<Content>(contents);
-                }
-
-                return source.Id;
+                contents.ToList().ForEach(content => content.SourceId = source.Id);
+                CreateRange<Content>(contents);
             }
-            catch
-            {
-                throw;
-            }
+
+            return source.Id;
         }
 
         public IDictionary<string, int> GetSupportedTypes()

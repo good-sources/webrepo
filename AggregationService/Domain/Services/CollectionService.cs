@@ -14,14 +14,7 @@
 
         public int Add(Collection collection)
         {
-            try
-            {
-                return Create(collection).Id;
-            }
-            catch
-            {
-                throw;
-            }
+            return Create(collection).Id;
         }
     }
 }
