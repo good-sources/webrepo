@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\DependencyResolver.cs" />
+    <Compile Include="App_Start\DependencyScope.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\CollectionsController.cs" />
     <Compile Include="Controllers\ContentsController.cs" />
