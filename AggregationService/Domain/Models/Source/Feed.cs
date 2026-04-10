@@ -1,6 +1,5 @@
 ﻿namespace AggregationService.Domain.Models
 {
-    using Newtonsoft.Json;
     using System.ComponentModel.DataAnnotations;
 
     public abstract class Feed : Source

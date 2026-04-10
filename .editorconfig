@@ -1,0 +1,4 @@
+﻿[*.{cs,vb}]
+
+# IDE0031: Use null propagation
+dotnet_diagnostic.IDE0031.severity = none

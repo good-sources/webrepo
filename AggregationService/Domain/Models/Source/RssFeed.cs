@@ -1,7 +1,5 @@
 ﻿namespace AggregationService.Domain.Models
 {
-    using Newtonsoft.Json;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     public class RssFeed : Feed
