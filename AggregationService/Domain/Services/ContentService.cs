@@ -8,9 +8,7 @@
 
     public class ContentService : Service<Content>, IContentService
     {
-        public ContentService() :
-            base(new AggregationServiceContext())
-        { }
+        public ContentService(DbContext context) : base(context) { }
 
         public IEnumerable<Content> GetByCollection(Guid collectionId)
         {

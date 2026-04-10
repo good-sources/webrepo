@@ -8,9 +8,7 @@
 
     public class CollectionService : Service<Collection>, ICollectionService
     {
-        public CollectionService() :
-            base(new AggregationServiceContext())
-        { }
+        public CollectionService(DbContext context) : base(context) { }
 
         public IEnumerable<Collection> Get() => Read().Include(c => c.Sources).ToList<Collection>();
 

@@ -9,10 +9,6 @@
     {
         private IContentService Service { get; }
 
-        public ContentsController() :
-            this(new ContentService())
-        { }
-
         public ContentsController(IContentService service)
         {
             Service = service;
@@ -23,10 +19,7 @@
         {
             try
             {
-                using (Service)
-                {
-                    return Json(Service.GetByCollection(id));
-                }
+                return Json(Service.GetByCollection(id));
             }
             catch (Exception ex)
             {

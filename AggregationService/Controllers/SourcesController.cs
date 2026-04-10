@@ -11,10 +11,6 @@
     {
         private ISourceService Service { get; }
 
-        public SourcesController() :
-            this(new SourceService())
-        { }
-
         public SourcesController(ISourceService service)
         {
             Service = service;
@@ -25,10 +21,7 @@
         {
             try
             {
-                using (Service)
-                {
-                    return Json(Service.GetSupportedTypes());
-                }
+                return Json(Service.GetSupportedTypes());
             }
             catch (Exception ex)
             {
@@ -45,10 +38,7 @@
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                using (Service)
-                {
-                    return Json(Service.Add(source));
-                }
+                return Json(Service.Add(source));
             }
             catch (DbUpdateException)
             {

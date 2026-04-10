@@ -2,14 +2,13 @@
 {
     using System;
     using System.Linq;
+    using System.Data.Entity;
     using System.Collections.Generic;
     using AggregationService.Domain.Models;
 
     public class SourceService : Service<Source>, ISourceService
     {
-        public SourceService() :
-            base(new AggregationServiceContext())
-        { }
+        public SourceService(DbContext context) : base(context) { }
 
         public Guid Add(Source source)
         {
