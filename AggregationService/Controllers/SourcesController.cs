@@ -50,7 +50,7 @@
                     return Json(Service.Add(source));
                 }
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException)
             {
                 //log
                 return Conflict();
