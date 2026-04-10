@@ -1,6 +1,7 @@
 ﻿namespace AggregationService.Domain.Services
 {    
     using System.Linq;
+    using System.Data.Entity;
     using System.Collections.Generic;
     using AggregationService.Domain.Models;
 
@@ -10,7 +11,7 @@
             base(new AggregationServiceContext())
         { }
 
-        public IEnumerable<Collection> Get() => Read().Include("Sources").ToList<Collection>();
+        public IEnumerable<Collection> Get() => Read().Include(c => c.Sources).ToList<Collection>();
 
         public int Add(Collection collection)
         {

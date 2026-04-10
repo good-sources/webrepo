@@ -1,7 +1,8 @@
 ﻿namespace AggregationService.Domain.Services
 {
-    using System;    
+    using System;
     using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
     using System.Collections.Generic;
 
     public abstract class Service<T> : IDisposable where T : class
@@ -37,6 +38,8 @@
         protected DbSet<T> Read() => _context.Set<T>();
 
         protected DbSet<U> Read<U>() where U : class => _context.Set<U>();
+
+        protected DbContextTransaction BeginTransaction() => _context.Database.BeginTransaction();
 
         protected void DeleteRange<U>(IEnumerable<U> rng) where U : class
         {

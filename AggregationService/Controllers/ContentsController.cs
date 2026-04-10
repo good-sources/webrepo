@@ -13,7 +13,7 @@
             this(new ContentService())
         { }
 
-        public ContentsController(ContentService service)
+        public ContentsController(IContentService service)
         {
             Service = service;
         }

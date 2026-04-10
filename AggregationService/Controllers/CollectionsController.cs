@@ -14,7 +14,7 @@
             this(new CollectionService())
         { }
 
-        public CollectionsController(CollectionService service)
+        public CollectionsController(ICollectionService service)
         {
             Service = service;
         }

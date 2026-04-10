@@ -15,12 +15,17 @@
         {
             Reader.Pull(source, out IEnumerable<Content> contents);
 
-            Create(source);
-
-            if (source.Id != Guid.Empty && contents.Any())
+            using (var transaction = BeginTransaction())
             {
-                contents.ToList().ForEach(content => content.SourceId = source.Id);
-                CreateRange<Content>(contents);
+                Create(source);
+
+                if (source.Id != Guid.Empty && contents.Any())
+                {
+                    contents.ToList().ForEach(content => content.SourceId = source.Id);
+                    CreateRange<Content>(contents);
+                }
+
+                transaction.Commit();
             }
 
             return source.Id;

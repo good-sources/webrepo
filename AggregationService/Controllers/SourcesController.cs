@@ -15,7 +15,7 @@
             this(new SourceService())
         { }
 
-        public SourcesController(SourceService service)
+        public SourcesController(ISourceService service)
         {
             Service = service;
         }

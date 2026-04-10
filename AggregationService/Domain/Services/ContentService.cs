@@ -1,6 +1,7 @@
 ﻿namespace AggregationService.Domain.Services
 {    
     using System.Linq;
+    using System.Data.Entity;
     using System.Collections.Generic;
     using AggregationService.Domain.Models;
 
@@ -13,21 +14,26 @@
         public IEnumerable<Content> GetByCollection(int collectionId)
         {
             IEnumerable<Source> sources = Read<Source>()
-                .Include("Contents")
+                .Include(s => s.Contents)
                 .Where(x => x.CollectionId == collectionId).ToList<Source>();
 
             foreach (Source source in sources)
             {
                 Reader.Validate(source, out IEnumerable<Content> validContents);
 
-                if (validContents.Any())
+                using (var transaction = BeginTransaction())
                 {
-                    DeleteRange<Content>(source.Contents);
-                    validContents.ToList().ForEach(content => content.SourceId = source.Id);
-                    CreateRange<Content>(validContents);
+                    if (validContents.Any())
+                    {
+                        DeleteRange<Content>(source.Contents);
+                        validContents.ToList().ForEach(content => content.SourceId = source.Id);
+                        CreateRange<Content>(validContents);
+                    }
+                    else
+                        CommitChanges();
+
+                    transaction.Commit();
                 }
-                else
-                    CommitChanges();
             }
 
             return Read()
