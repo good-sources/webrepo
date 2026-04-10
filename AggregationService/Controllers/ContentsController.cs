@@ -7,11 +7,11 @@
     [RoutePrefix("api/contents")]
     public class ContentsController : ApiController
     {
-        private IContentService Service { get; }
+        private readonly IContentService _contentService;
 
-        public ContentsController(IContentService service)
+        public ContentsController(IContentService contentService)
         {
-            Service = service;
+            _contentService = contentService;
         }
 
         [Route("bycollection/{id:guid}")]
@@ -19,7 +19,7 @@
         {
             try
             {
-                return Json(Service.GetByCollection(id));
+                return Json(_contentService.GetByCollection(id));
             }
             catch (Exception ex)
             {

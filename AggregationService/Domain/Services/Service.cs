@@ -1,13 +1,12 @@
 ﻿namespace AggregationService.Domain.Services
 {
     using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
     using System.Collections.Generic;
+    using System.Data.Entity;
 
     public abstract class Service<T> : IDisposable where T : class
     {
-        private DbContext _context;
+        private readonly DbContext _context;
 
         protected Service(DbContext context) => _context = context;
 

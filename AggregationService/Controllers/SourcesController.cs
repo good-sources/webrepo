@@ -9,11 +9,11 @@
     [RoutePrefix("api/sources")]
     public class SourcesController : ApiController
     {
-        private ISourceService Service { get; }
+        private readonly ISourceService _sourceService;
 
-        public SourcesController(ISourceService service)
+        public SourcesController(ISourceService sourceService)
         {
-            Service = service;
+            _sourceService = sourceService;
         }
 
         [Route("~/api/supportedsourcetypes")]
@@ -21,7 +21,7 @@
         {
             try
             {
-                return Json(Service.GetSupportedTypes());
+                return Json(_sourceService.GetSupportedTypes());
             }
             catch (Exception ex)
             {
@@ -38,7 +38,7 @@
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                return Json(Service.Add(source));
+                return Json(_sourceService.Add(source));
             }
             catch (DbUpdateException)
             {

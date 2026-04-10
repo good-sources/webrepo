@@ -8,11 +8,11 @@
     [RoutePrefix("api/collections")]
     public class CollectionsController : ApiController
     {
-        private ICollectionService Service { get; }
+        private readonly ICollectionService _collectionService;
 
-        public CollectionsController(ICollectionService service)
+        public CollectionsController(ICollectionService collectionService)
         {
-            Service = service;
+            _collectionService = collectionService;
         }
 
         [Route("")]
@@ -20,7 +20,7 @@
         {
             try
             {
-                return Json(Service.Get());
+                return Json(_collectionService.Get());
             }
             catch (Exception ex)
             {
@@ -37,7 +37,7 @@
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                return Json(Service.Add(collection));
+                return Json(_collectionService.Add(collection));
             }
             catch (Exception ex)
             {
