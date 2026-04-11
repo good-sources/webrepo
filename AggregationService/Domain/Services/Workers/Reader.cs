@@ -6,6 +6,7 @@
     using System.Web.Http;
     using System.Net.Http.Headers;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AggregationService.Domain.Models;
 
     internal static class Reader
@@ -38,21 +39,19 @@
             }
         }
 
-        public static void Pull(Source source, out IEnumerable<Content> contents)
+        public static async Task<IEnumerable<Content>> PullAsync(Source source)
         {
             ValidateUri(source.Uri);
             using (var request = new HttpRequestMessage(HttpMethod.Get, source.Uri))
-            using (HttpResponseMessage message = _client.SendAsync(request).Result)
+            using (HttpResponseMessage message = await _client.SendAsync(request))
             {
                 ValidateSource(source, message);
-                contents = _parser.Parse(source, message.Content.ReadAsStringAsync().Result);
+                return _parser.Parse(source, await message.Content.ReadAsStringAsync());
             }
         }
 
-        public static void Validate(Source source, out IEnumerable<Content> validContents)
+        public static async Task<IEnumerable<Content>> ValidateAsync(Source source)
         {
-            validContents = new List<Content>();
-
             if (!source.Expires.HasValue || source.Expires <= DateTime.Now)
             {
                 ValidateUri(source.Uri);
@@ -60,7 +59,7 @@
                 {
                     request.Headers.IfModifiedSince = source.LastlyModified;
 
-                    using (HttpResponseMessage message = _client.SendAsync(request).Result)
+                    using (HttpResponseMessage message = await _client.SendAsync(request))
                     {
                         if (message.StatusCode == HttpStatusCode.NotModified || message.IsSuccessStatusCode)
                         {
@@ -68,7 +67,7 @@
 
                             if (message.IsSuccessStatusCode)
                             {
-                                validContents = _parser.Parse(source, message.Content.ReadAsStringAsync().Result);
+                                return _parser.Parse(source, await message.Content.ReadAsStringAsync());
                             }
                         }
                         else
@@ -78,6 +77,8 @@
                     }
                 }
             }
+
+            return new List<Content>();
         }
 
         private static void ValidateSource(Source source, HttpResponseMessage message)

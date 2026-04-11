@@ -1,6 +1,7 @@
-﻿namespace AggregationService.Controllers
+namespace AggregationService.Controllers
 {
     using System;
+    using System.Threading.Tasks;
     using System.Web.Http;
     using AggregationService.Domain.Models;
     using AggregationService.Domain.Services;
@@ -16,11 +17,11 @@
         }
 
         [Route("")]
-        public IHttpActionResult Get()
+        public async Task<IHttpActionResult> Get()
         {
             try
             {
-                return Json(_collectionService.Get());
+                return Json(await _collectionService.GetAsync());
             }
             catch (Exception ex)
             {
@@ -30,7 +31,7 @@
         }
 
         [Route("")]
-        public IHttpActionResult Post(Collection collection)
+        public async Task<IHttpActionResult> Post(Collection collection)
         {
             try
             {
@@ -39,7 +40,7 @@
                     return BadRequest(ModelState);
                 }
 
-                return Json(_collectionService.Add(collection));
+                return Json(await _collectionService.AddAsync(collection));
             }
             catch (Exception ex)
             {

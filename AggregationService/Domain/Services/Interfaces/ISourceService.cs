@@ -1,12 +1,13 @@
-﻿namespace AggregationService.Domain.Services
+namespace AggregationService.Domain.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AggregationService.Domain.Models;
 
     public interface ISourceService : IDisposable
-    {       
+    {
         IDictionary<string, int> GetSupportedTypes();
-        Guid Add(Source source);        
+        Task<Guid> AddAsync(Source source);
     }
 }

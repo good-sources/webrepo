@@ -1,8 +1,9 @@
-﻿namespace AggregationService.Domain.Services
+namespace AggregationService.Domain.Services
 {
     using System;
     using System.Collections.Generic;
     using System.Data.Entity;
+    using System.Threading.Tasks;
 
     public abstract class Service<T> : IDisposable where T : class
     {
@@ -10,26 +11,26 @@
 
         protected Service(DbContext context) => _context = context;
 
-        protected T Create(T obj)
+        protected async Task<T> CreateAsync(T obj)
         {
             _context.Set<T>().Add(obj);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return obj;
         }
 
-        protected IEnumerable<T> CreateRange(IEnumerable<T> rng)
+        protected async Task<IEnumerable<T>> CreateRangeAsync(IEnumerable<T> rng)
         {
             _context.Set<T>().AddRange(rng);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return rng;
         }
 
-        protected IEnumerable<U> CreateRange<U>(IEnumerable<U> rng) where U : class
+        protected async Task<IEnumerable<U>> CreateRangeAsync<U>(IEnumerable<U> rng) where U : class
         {
             _context.Set<U>().AddRange(rng);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return rng;
         }
@@ -40,15 +41,15 @@
 
         protected DbContextTransaction BeginTransaction() => _context.Database.BeginTransaction();
 
-        protected void DeleteRange<U>(IEnumerable<U> rng) where U : class
+        protected async Task DeleteRangeAsync<U>(IEnumerable<U> rng) where U : class
         {
             _context.Set<U>().RemoveRange(rng);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        protected void CommitChanges()
+        protected async Task CommitChangesAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public void Dispose()

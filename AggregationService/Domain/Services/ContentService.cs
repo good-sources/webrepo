@@ -1,45 +1,46 @@
-﻿namespace AggregationService.Domain.Services
-{    
+namespace AggregationService.Domain.Services
+{
     using System;
     using System.Linq;
     using System.Data.Entity;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AggregationService.Domain.Models;
 
     public class ContentService : Service<Content>, IContentService
     {
         public ContentService(DbContext context) : base(context) { }
 
-        public IEnumerable<Content> GetByCollection(Guid collectionId)
+        public async Task<IEnumerable<Content>> GetByCollectionAsync(Guid collectionId)
         {
-            IEnumerable<Source> sources = Read<Source>()
+            IEnumerable<Source> sources = await Read<Source>()
                 .Include(s => s.Contents)
-                .Where(x => x.CollectionId == collectionId).ToList<Source>();
+                .Where(x => x.CollectionId == collectionId).ToListAsync();
 
             foreach (Source source in sources)
             {
-                Reader.Validate(source, out IEnumerable<Content> validContents);
+                IEnumerable<Content> validContents = await Reader.ValidateAsync(source);
 
                 using (var transaction = BeginTransaction())
                 {
                     if (validContents.Any())
                     {
-                        DeleteRange<Content>(source.Contents);
+                        await DeleteRangeAsync<Content>(source.Contents);
                         validContents.ToList().ForEach(content => content.SourceId = source.Id);
-                        CreateRange<Content>(validContents);
+                        await CreateRangeAsync<Content>(validContents);
                     }
                     else
                     {
-                        CommitChanges();
+                        await CommitChangesAsync();
                     }
 
                     transaction.Commit();
                 }
             }
 
-            return Read()
+            return await Read()
                 .Where(x => x.Source.CollectionId == collectionId)
-                .OrderByDescending(x => x.Published).ToList<Content>();
+                .OrderByDescending(x => x.Published).ToListAsync();
         }
     }
 }

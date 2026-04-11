@@ -1,4 +1,4 @@
-﻿namespace AggregationServiceClient
+namespace AggregationServiceClient
 {
     using System;
     using System.Linq;
@@ -6,13 +6,14 @@
     using System.Net.Http;
     using System.Net.Http.Formatting;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AggregationService.Domain.Models;
 
     class ServiceConsumer
     {
         readonly HttpClient _client;
         readonly Uri baseUri;
-        
+
         public ServiceConsumer(string uri)
         {
             _client = new HttpClient();
@@ -21,42 +22,34 @@
             this.baseUri = new Uri(uri);
         }
 
-        public IEnumerable<Collection> GetCollections()
+        public async Task<IEnumerable<Collection>> GetCollectionsAsync()
         {
-            IEnumerable<Collection> collections = default(IEnumerable<Collection>);
-
             try
             {
-                using (var response = _client.GetAsync(baseUri.AddSegment("collections")))
+                using (HttpResponseMessage message = await _client.GetAsync(baseUri.AddSegment("collections")))
                 {
-                    HttpResponseMessage message = response.Result;
                     message.EnsureSuccessStatusCode();
-
-                    collections = message.Content.ReadAsAsync<IEnumerable<Collection>>().Result;
+                    return await message.Content.ReadAsAsync<IEnumerable<Collection>>();
                 }
             }
             catch
             {
                 throw;
             }
-
-            return collections;
         }
 
-        public bool CreateCollection(string collectionName)
+        public async Task<bool> CreateCollectionAsync(string collectionName)
         {
             Collection collection = new Collection()
             {
                 Name = collectionName
             };
-            
+
             try
             {
-                using (var response = _client.PostAsJsonAsync(baseUri.AddSegment("collections"), collection))
+                using (HttpResponseMessage message = await _client.PostAsJsonAsync(baseUri.AddSegment("collections"), collection))
                 {
-                    HttpResponseMessage message = response.Result;
                     message.EnsureSuccessStatusCode();
-
                     return true;
                 }
             }
@@ -66,7 +59,7 @@
             }
         }
 
-        public bool CreateSource(string input)
+        public async Task<bool> CreateSourceAsync(string input)
         {
             Source source;
             Collection collection;
@@ -97,7 +90,7 @@
                 uri = sourceFields[1].Trim();
                 collectionName = sourceFields[2].Trim();
 
-                collections = GetCollections();
+                collections = await GetCollectionsAsync();
                 collection = collections.Where(x => x.Name == collectionName).FirstOrDefault();
 
                 if (collection == null)
@@ -118,11 +111,9 @@
                         throw new ArgumentException("Invalid source type");
                 }
 
-                using (var response = _client.PostAsJsonAsync(baseUri.AddSegment("sources"), source))
+                using (HttpResponseMessage message = await _client.PostAsJsonAsync(baseUri.AddSegment("sources"), source))
                 {
-                    HttpResponseMessage message = response.Result;
                     message.EnsureSuccessStatusCode();
-
                     return true;
                 }
             }
@@ -132,37 +123,30 @@
             }
         }
 
-        public IDictionary<string, int> GetSupportedSourceTypes()
+        public async Task<IDictionary<string, int>> GetSupportedSourceTypesAsync()
         {
-            IDictionary<string, int> sourceTypes = default(IDictionary<string, int>);
-
             try
             {
-                using (var response = _client.GetAsync(baseUri.AddSegment("supportedsourcetypes")))
+                using (HttpResponseMessage message = await _client.GetAsync(baseUri.AddSegment("supportedsourcetypes")))
                 {
-                    HttpResponseMessage message = response.Result;
                     message.EnsureSuccessStatusCode();
-
-                    sourceTypes = message.Content.ReadAsAsync<IDictionary<string, int>>().Result;
+                    return await message.Content.ReadAsAsync<IDictionary<string, int>>();
                 }
             }
             catch
             {
                 throw;
             }
-
-            return sourceTypes;
         }
 
-        public IEnumerable<Content> GetContentsByCollection(string collectionName)
+        public async Task<IEnumerable<Content>> GetContentsByCollectionAsync(string collectionName)
         {
-            IEnumerable<Content> contents = default(IEnumerable<Content>);
             IEnumerable<Collection> collections;
             Collection collection;
 
             try
             {
-                collections = GetCollections();
+                collections = await GetCollectionsAsync();
                 collection = collections.Where(x => x.Name == collectionName).FirstOrDefault();
 
                 if (collection == null)
@@ -170,9 +154,8 @@
                     throw new ArgumentException("Invalid collection name");
                 }
 
-                using (var response = _client.GetAsync(baseUri.AddSegment($"contents/bycollection/{collection.Id}")))
+                using (HttpResponseMessage message = await _client.GetAsync(baseUri.AddSegment($"contents/bycollection/{collection.Id}")))
                 {
-                    HttpResponseMessage message = response.Result;
                     message.EnsureSuccessStatusCode();
 
                     var formatter = new JsonMediaTypeFormatter
@@ -180,15 +163,13 @@
                         SerializerSettings = { TypeNameHandling = TypeNameHandling.Auto }
                     };
 
-                    contents = message.Content.ReadAsAsync<IEnumerable<Content>>(new[] { formatter }).Result;
+                    return await message.Content.ReadAsAsync<IEnumerable<Content>>(new[] { formatter });
                 }
             }
             catch
             {
                 throw;
             }
-
-            return contents;
         }
     }
 

@@ -1,27 +1,28 @@
-﻿namespace AggregationService.Domain.Services
+namespace AggregationService.Domain.Services
 {
     using System;
     using System.Linq;
     using System.Data.Entity;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AggregationService.Domain.Models;
 
     public class SourceService : Service<Source>, ISourceService
     {
         public SourceService(DbContext context) : base(context) { }
 
-        public Guid Add(Source source)
+        public async Task<Guid> AddAsync(Source source)
         {
-            Reader.Pull(source, out IEnumerable<Content> contents);
+            IEnumerable<Content> contents = await Reader.PullAsync(source);
 
             using (var transaction = BeginTransaction())
             {
-                Create(source);
+                await CreateAsync(source);
 
                 if (source.Id != Guid.Empty && contents.Any())
                 {
                     contents.ToList().ForEach(content => content.SourceId = source.Id);
-                    CreateRange<Content>(contents);
+                    await CreateRangeAsync<Content>(contents);
                 }
 
                 transaction.Commit();

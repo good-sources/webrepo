@@ -1,6 +1,7 @@
-﻿namespace AggregationService.Controllers
+namespace AggregationService.Controllers
 {
     using System;
+    using System.Threading.Tasks;
     using System.Web.Http;
     using AggregationService.Domain.Services;
 
@@ -15,11 +16,11 @@
         }
 
         [Route("bycollection/{id:guid}")]
-        public IHttpActionResult GetByCollection(Guid id)
+        public async Task<IHttpActionResult> GetByCollection(Guid id)
         {
             try
             {
-                return Json(_contentService.GetByCollection(id));
+                return Json(await _contentService.GetByCollectionAsync(id));
             }
             catch (Exception ex)
             {

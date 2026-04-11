@@ -1,6 +1,7 @@
-﻿namespace AggregationServiceClient
+namespace AggregationServiceClient
 {
     using System;
+    using System.Threading.Tasks;
     using AggregationService.Domain.Models;
 
     class Program
@@ -9,7 +10,7 @@
         static readonly ServiceConsumer serviceConsumer = new ServiceConsumer(endpointAddress);
         static readonly OutputFormatter formatter = new OutputFormatter();
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             Console.WriteLine("************* Welcome to Aggregation Service consuming app *************\n\n");
             Console.WriteLine("— Press (spacebar) to see available options or any other key for exit —\n");
@@ -30,14 +31,14 @@
                         {
                             case 'a':
                                 Console.WriteLine("Collections list");
-                                Console.WriteLine(formatter.FormatCollections(serviceConsumer.GetCollections()));
+                                Console.WriteLine(formatter.FormatCollections(await serviceConsumer.GetCollectionsAsync()));
 
                                 break;
                             case 'b':
                                 Console.WriteLine("New collection");
                                 Console.Write("Specify collection name: ");
 
-                                if (serviceConsumer.CreateCollection(Console.ReadLine()))
+                                if (await serviceConsumer.CreateCollectionAsync(Console.ReadLine()))
                                 {
                                     Console.WriteLine("New collection has been added");
                                 }
@@ -46,9 +47,9 @@
                                 goto case 'a';
                             case 'c':
                                 Console.WriteLine("New source");
-                                Console.WriteLine($"Specify – separated by comma – type of source ({formatter.FormatSourceTypesDictionary(serviceConsumer.GetSupportedSourceTypes())}), URI and collection name: ");
+                                Console.WriteLine($"Specify – separated by comma – type of source ({formatter.FormatSourceTypesDictionary(await serviceConsumer.GetSupportedSourceTypesAsync())}), URI and collection name: ");
 
-                                if (serviceConsumer.CreateSource(Console.ReadLine()))
+                                if (await serviceConsumer.CreateSourceAsync(Console.ReadLine()))
                                 {
                                     Console.Write("New source has been added");
                                 }
@@ -59,7 +60,7 @@
                                 Console.Write("Specify collection name: ");
                                 string collectionName = Console.ReadLine();
 
-                                Console.WriteLine(formatter.FormatContents(serviceConsumer.GetContentsByCollection(collectionName), collectionName));                                
+                                Console.WriteLine(formatter.FormatContents(await serviceConsumer.GetContentsByCollectionAsync(collectionName), collectionName));
                                 break;
                             case 'q':
                                 return;
@@ -72,7 +73,7 @@
                 {
                     Console.WriteLine(ex.Message);
                     Console.ReadKey();
-                }                
+                }
             }
         }
     }

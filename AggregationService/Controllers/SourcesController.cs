@@ -1,10 +1,11 @@
-﻿namespace AggregationService.Controllers
+namespace AggregationService.Controllers
 {
     using System;
+    using System.Threading.Tasks;
     using System.Web.Http;
     using AggregationService.Domain.Models;
     using System.Data.Entity.Infrastructure;
-    using AggregationService.Domain.Services;    
+    using AggregationService.Domain.Services;
 
     [RoutePrefix("api/sources")]
     public class SourcesController : ApiController
@@ -31,7 +32,7 @@
         }
 
         [Route("")]
-        public IHttpActionResult Post(Source source)
+        public async Task<IHttpActionResult> Post(Source source)
         {
             try
             {
@@ -40,7 +41,7 @@
                     return BadRequest(ModelState);
                 }
 
-                return Json(_sourceService.Add(source));
+                return Json(await _sourceService.AddAsync(source));
             }
             catch (DbUpdateException)
             {

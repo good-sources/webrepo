@@ -1,12 +1,13 @@
-﻿namespace AggregationService.Domain.Services
+namespace AggregationService.Domain.Services
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using AggregationService.Domain.Models;
 
     public interface ICollectionService : IDisposable
     {
-        IEnumerable<Collection> Get();
-        Guid Add(Collection collection);
+        Task<IEnumerable<Collection>> GetAsync();
+        Task<Guid> AddAsync(Collection collection);
     }
 }
