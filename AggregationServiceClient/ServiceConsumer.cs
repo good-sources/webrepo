@@ -22,6 +22,28 @@ namespace AggregationServiceClient
             this.baseUri = new Uri(uri);
         }
 
+        public async Task AuthenticateAsync(string username, string password)
+        {
+            var tokenUri = baseUri.AddSegment("auth/token");
+
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "password"),
+                new KeyValuePair<string, string>("username", username),
+                new KeyValuePair<string, string>("password", password)
+            });
+
+            using (HttpResponseMessage response = await _client.PostAsync(tokenUri, content))
+            {
+                response.EnsureSuccessStatusCode();
+                string json = await response.Content.ReadAsStringAsync();
+                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(json);
+
+                _client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
+            }
+        }
+
         public async Task<IEnumerable<Collection>> GetCollectionsAsync()
         {
             try
@@ -182,5 +204,17 @@ namespace AggregationServiceClient
 
             return ub.Uri;
         }
+    }
+
+    class TokenResponse
+    {
+        [JsonProperty("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("token_type")]
+        public string TokenType { get; set; }
+
+        [JsonProperty("expires_in")]
+        public int ExpiresIn { get; set; }
     }
 }

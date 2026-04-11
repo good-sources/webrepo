@@ -7,6 +7,7 @@ namespace AggregationService.Controllers
     using System.Data.Entity.Infrastructure;
     using AggregationService.Domain.Services;
 
+    [Authorize]
     [RoutePrefix("api/sources")]
     public class SourcesController : ApiController
     {

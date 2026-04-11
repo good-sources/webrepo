@@ -5,6 +5,7 @@ namespace AggregationService.Controllers
     using System.Web.Http;
     using AggregationService.Domain.Services;
 
+    [Authorize]
     [RoutePrefix("api/contents")]
     public class ContentsController : ApiController
     {

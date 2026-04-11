@@ -6,6 +6,7 @@ namespace AggregationService.Controllers
     using AggregationService.Domain.Models;
     using AggregationService.Domain.Services;
 
+    [Authorize]
     [RoutePrefix("api/collections")]
     public class CollectionsController : ApiController
     {

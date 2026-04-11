@@ -13,6 +13,25 @@ namespace AggregationServiceClient
         static async Task Main(string[] args)
         {
             Console.WriteLine("************* Welcome to Aggregation Service consuming app *************\n\n");
+
+            Console.Write("Username: ");
+            string username = Console.ReadLine();
+            Console.Write("Password: ");
+            string password = ReadPassword();
+            Console.WriteLine();
+
+            try
+            {
+                await serviceConsumer.AuthenticateAsync(username, password);
+                Console.WriteLine("Authenticated successfully.\n");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Authentication failed: {ex.Message}");
+                Console.ReadKey();
+                return;
+            }
+
             Console.WriteLine("— Press (spacebar) to see available options or any other key for exit —\n");
 
             if (Console.ReadKey(true).Key == ConsoleKey.Spacebar)
@@ -75,6 +94,28 @@ namespace AggregationServiceClient
                     Console.ReadKey();
                 }
             }
+        }
+
+        static string ReadPassword()
+        {
+            var password = new System.Text.StringBuilder();
+            ConsoleKeyInfo key;
+
+            while ((key = Console.ReadKey(true)).Key != ConsoleKey.Enter)
+            {
+                if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+                {
+                    password.Remove(password.Length - 1, 1);
+                    Console.Write("\b \b");
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    password.Append(key.KeyChar);
+                    Console.Write("*");
+                }
+            }
+
+            return password.ToString();
         }
     }
 }

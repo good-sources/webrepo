@@ -1,5 +1,4 @@
 ﻿using System.Web;
-using System.Web.Http;
 
 namespace AggregationService
 {
@@ -7,7 +6,7 @@ namespace AggregationService
     {
         protected void Application_Start()
         {
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            // Web API configuration is now handled by OWIN Startup class (App_Start/Startup.cs)
         }
     }
 }
