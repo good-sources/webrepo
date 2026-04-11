@@ -14,7 +14,9 @@ namespace AggregationService
             get
             {
                 if (_context == null)
+                {
                     _context = new AggregationServiceContext();
+                }
 
                 return _context;
             }

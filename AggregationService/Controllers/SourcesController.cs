@@ -36,7 +36,9 @@
             try
             {
                 if (!ModelState.IsValid)
+                {
                     return BadRequest(ModelState);
+                }
 
                 return Json(_sourceService.Add(source));
             }

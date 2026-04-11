@@ -77,16 +77,22 @@
             try
             {
                 if (sourceFields.Length != 3)
+                {
                     throw new ArgumentException("One or more arguments missed");
+                }
 
                 foreach (string field in sourceFields)
                 {
                     if (string.IsNullOrEmpty(field))
+                    {
                         throw new ArgumentException("One or more arguments missed");
+                    }
                 }
 
                 if (!Int32.TryParse(sourceFields[0].Trim(), out int type))
+                {
                     throw new ArgumentException("Invalid source type");
+                }
 
                 uri = sourceFields[1].Trim();
                 collectionName = sourceFields[2].Trim();
@@ -95,7 +101,9 @@
                 collection = collections.Where(x => x.Name == collectionName).FirstOrDefault();
 
                 if (collection == null)
+                {
                     throw new ArgumentException("Invalid collection name");
+                }
 
                 switch ((SourceType)type)
                 {
@@ -158,7 +166,9 @@
                 collection = collections.Where(x => x.Name == collectionName).FirstOrDefault();
 
                 if (collection == null)
+                {
                     throw new ArgumentException("Invalid collection name");
+                }
 
                 using (var response = _client.GetAsync(baseUri.AddSegment($"contents/bycollection/{collection.Id}")))
                 {

@@ -21,7 +21,9 @@ namespace AggregationServiceClient
         public string FormatRssFeed(RssFeed feed)
         {
             if (feed == null)
+            {
                 return string.Empty;
+            }
 
             return $"Title: {feed.Title ?? string.Empty}\nDescription: {feed.Description ?? string.Empty}\nLink: {feed.Link ?? string.Empty}\n\n";
         }
@@ -36,7 +38,9 @@ namespace AggregationServiceClient
             }
 
             if (output.Length > 2)
+            {
                 output = output.Substring(0, output.Length - 2);
+            }
 
             return output;
         }
@@ -53,7 +57,9 @@ namespace AggregationServiceClient
                 }
 
                 if (content.Published.HasValue)
+                {
                     output = output + $"\nPublished: {content.Published}";
+                }
 
                 output = output + "\n\n";
             }
@@ -64,7 +70,9 @@ namespace AggregationServiceClient
         public string FormatRssItem(RssItem item)
         {
             if (item == null)
+            {
                 return string.Empty;
+            }
             
             return $"Title: {item.Title ?? string.Empty}\nDescription: {item.Description ?? string.Empty}\nAuthor: {item.Author ?? string.Empty}\nLink: {item.Link ?? string.Empty}";
         }

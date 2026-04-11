@@ -67,10 +67,14 @@
                             ValidateSource(source, message);
 
                             if (message.IsSuccessStatusCode)
+                            {
                                 validContents = _parser.Parse(source, message.Content.ReadAsStringAsync().Result);
+                            }
                         }
                         else
+                        {
                             throw new HttpResponseException(message.StatusCode);
+                        }
                     }
                 }
             }
@@ -83,14 +87,20 @@
             TimeSpan? MaxAge = message.Headers.CacheControl?.MaxAge;
 
             if (LastModified.HasValue)
+            {
                 source.LastlyModified = LastModified.Value;
+            }
 
             if (MaxAge.HasValue)
+            {
                 source.Expires = DateTime.Now.AddSeconds(MaxAge.Value.TotalSeconds);
+            }
             else
             {
                 if (Expires.HasValue)
+                {
                     source.Expires = Expires.Value.DateTime.ToLocalTime();
+                }
             }
         }
     }

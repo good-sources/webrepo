@@ -112,7 +112,9 @@
                 DateTime result;
 
                 if (DateTime.TryParse(dtos, out result))
+                {
                     return result.ToUniversalTime();
+                }
             }
 
             return default(DateTime?);

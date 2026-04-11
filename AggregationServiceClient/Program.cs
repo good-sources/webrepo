@@ -38,7 +38,9 @@
                                 Console.Write("Specify collection name: ");
 
                                 if (serviceConsumer.CreateCollection(Console.ReadLine()))
+                                {
                                     Console.WriteLine("New collection has been added");
+                                }
 
                                 Console.WriteLine();
                                 goto case 'a';
@@ -47,7 +49,9 @@
                                 Console.WriteLine($"Specify – separated by comma – type of source ({formatter.FormatSourceTypesDictionary(serviceConsumer.GetSupportedSourceTypes())}), URI and collection name: ");
 
                                 if (serviceConsumer.CreateSource(Console.ReadLine()))
+                                {
                                     Console.Write("New source has been added");
+                                }
 
                                 break;
                             case 'd':

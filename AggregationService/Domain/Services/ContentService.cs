@@ -29,7 +29,9 @@
                         CreateRange<Content>(validContents);
                     }
                     else
+                    {
                         CommitChanges();
+                    }
 
                     transaction.Commit();
                 }

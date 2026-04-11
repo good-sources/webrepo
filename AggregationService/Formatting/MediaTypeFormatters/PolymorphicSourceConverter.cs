@@ -23,11 +23,17 @@
             var collection = obj["CollectionId"];
 
             if (uri == null)
+            {
                 throw new ArgumentException("Missing URI", "Uri");
+            }
             if (type == null)
+            {
                 throw new ArgumentException("Missing type", "Type");
+            }
             if (collection == null)
+            {
                 throw new ArgumentException("Missing collection", "CollectionId");
+            }
 
             int typeValue = type.Value<int>();
 
