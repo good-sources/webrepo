@@ -2,10 +2,12 @@
 {
     using System.Xml;
     using System.Collections.Generic;
+    using NLog;
     using AggregationService.Domain.Models;
 
     internal class Parser
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public IEnumerable<Content> Parse(Source source, string document)
         {
             switch (source.Type)
@@ -45,6 +47,7 @@
                 });
             }
 
+            Logger.Debug("Parsed {Count} items from RSS feed {SourceUri}", contents.Count, feed.Uri);
             return contents;
         }
     }

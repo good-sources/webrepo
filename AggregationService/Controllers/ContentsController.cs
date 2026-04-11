@@ -3,12 +3,14 @@ namespace AggregationService.Controllers
     using System;
     using System.Threading.Tasks;
     using System.Web.Http;
+    using NLog;
     using AggregationService.Domain.Services;
 
     [Authorize]
     [RoutePrefix("api/contents")]
     public class ContentsController : ApiController
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IContentService _contentService;
 
         public ContentsController(IContentService contentService)
@@ -25,7 +27,7 @@ namespace AggregationService.Controllers
             }
             catch (Exception ex)
             {
-                //log
+                Logger.Error(ex, "Failed to retrieve contents for collection {CollectionId}", id);
                 return InternalServerError(ex);
             }
         }

@@ -5,14 +5,18 @@ namespace AggregationService.Domain.Services
     using System.Data.Entity;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using NLog;
     using AggregationService.Domain.Models;
 
     public class SourceService : Service<Source>, ISourceService
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public SourceService(DbContext context) : base(context) { }
 
         public async Task<Guid> AddAsync(Source source)
         {
+            Logger.Info("Adding source {SourceUri}", source.Uri);
             IEnumerable<Content> contents = await Reader.PullAsync(source);
 
             using (var transaction = BeginTransaction())
@@ -26,6 +30,7 @@ namespace AggregationService.Domain.Services
                 }
 
                 transaction.Commit();
+                Logger.Info("Source {SourceId} created with {ContentCount} initial content items", source.Id, contents.Count());
             }
 
             return source.Id;

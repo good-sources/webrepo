@@ -3,6 +3,7 @@ namespace AggregationService.Controllers
     using System;
     using System.Threading.Tasks;
     using System.Web.Http;
+    using NLog;
     using AggregationService.Domain.Models;
     using AggregationService.Domain.Services;
 
@@ -10,6 +11,7 @@ namespace AggregationService.Controllers
     [RoutePrefix("api/collections")]
     public class CollectionsController : ApiController
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ICollectionService _collectionService;
 
         public CollectionsController(ICollectionService collectionService)
@@ -26,7 +28,7 @@ namespace AggregationService.Controllers
             }
             catch (Exception ex)
             {
-                //log
+                Logger.Error(ex, "Failed to retrieve collections");
                 return InternalServerError(ex);
             }
         }
@@ -45,7 +47,7 @@ namespace AggregationService.Controllers
             }
             catch (Exception ex)
             {
-                //log
+                Logger.Error(ex, "Failed to create collection");
                 return InternalServerError(ex);
             }
         }

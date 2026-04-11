@@ -7,10 +7,12 @@
     using System.Net.Http.Headers;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using NLog;
     using AggregationService.Domain.Models;
 
     internal static class Reader
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly HttpClient _client;
         private static readonly Parser _parser;
 
@@ -35,12 +37,14 @@
             if (!System.Uri.TryCreate(uri, UriKind.Absolute, out Uri parsedUri)
                 || (parsedUri.Scheme != System.Uri.UriSchemeHttp && parsedUri.Scheme != System.Uri.UriSchemeHttps))
             {
+                Logger.Warn("Invalid URI rejected: {Uri}", uri);
                 throw new ArgumentException("Only HTTP and HTTPS URIs are allowed.");
             }
         }
 
         public static async Task<IEnumerable<Content>> PullAsync(Source source)
         {
+            Logger.Info("Pulling content from source {SourceUri}", source.Uri);
             ValidateUri(source.Uri);
             using (var request = new HttpRequestMessage(HttpMethod.Get, source.Uri))
             using (HttpResponseMessage message = await _client.SendAsync(request))
@@ -54,6 +58,7 @@
         {
             if (!source.Expires.HasValue || source.Expires <= DateTime.Now)
             {
+                Logger.Debug("Validating source {SourceUri}, Expires={Expires}", source.Uri, source.Expires);
                 ValidateUri(source.Uri);
                 using (var request = new HttpRequestMessage(HttpMethod.Get, source.Uri))
                 {
@@ -72,6 +77,7 @@
                         }
                         else
                         {
+                            Logger.Warn("Source {SourceUri} returned non-success status {StatusCode}", source.Uri, message.StatusCode);
                             throw new HttpResponseException(message.StatusCode);
                         }
                     }
