@@ -43,7 +43,7 @@
                     source = new RssFeed()
                     {
                         Uri = uri.Value<string>(),
-                        CollectionId = collection.Value<Guid>()
+                        CollectionId = Guid.Parse(collection.Value<string>())
                     };
                     break;
                 default:

@@ -131,7 +131,10 @@
     <Compile Include="Domain\Services\Workers\Parser.cs" />
     <Compile Include="Domain\Services\Workers\Reader.cs" />
     <Compile Include="Domain\Services\ContentService.cs" />
+    <Compile Include="Domain\Services\DbContextTransactionWrapper.cs" />
     <Compile Include="Domain\Services\Interfaces\IContentService.cs" />
+    <Compile Include="Domain\Services\Interfaces\IReader.cs" />
+    <Compile Include="Domain\Services\Interfaces\ITransaction.cs" />
     <Compile Include="Domain\Services\Interfaces\ISourceService.cs" />
     <Compile Include="Domain\Services\Service.cs" />
     <Compile Include="Domain\Services\SourceService.cs" />

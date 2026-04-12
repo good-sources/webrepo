@@ -11,8 +11,12 @@ namespace AggregationService.Domain.Services
     public class ContentService : Service<Content>, IContentService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IReader _reader;
 
-        public ContentService(DbContext context) : base(context) { }
+        public ContentService(DbContext context, IReader reader) : base(context)
+        {
+            _reader = reader;
+        }
 
         public async Task<IEnumerable<Content>> GetByCollectionAsync(Guid collectionId)
         {
@@ -23,7 +27,7 @@ namespace AggregationService.Domain.Services
 
             foreach (Source source in sources)
             {
-                IEnumerable<Content> validContents = await Reader.ValidateAsync(source);
+                IEnumerable<Content> validContents = await _reader.ValidateAsync(source);
 
                 using (var transaction = BeginTransaction())
                 {

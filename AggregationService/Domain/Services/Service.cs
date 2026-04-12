@@ -39,7 +39,7 @@ namespace AggregationService.Domain.Services
 
         protected DbSet<U> Read<U>() where U : class => _context.Set<U>();
 
-        protected DbContextTransaction BeginTransaction() => _context.Database.BeginTransaction();
+        protected virtual ITransaction BeginTransaction() => new DbContextTransactionWrapper(_context.Database.BeginTransaction());
 
         protected async Task DeleteRangeAsync<U>(IEnumerable<U> rng) where U : class
         {

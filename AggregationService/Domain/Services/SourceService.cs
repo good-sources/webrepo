@@ -11,13 +11,17 @@ namespace AggregationService.Domain.Services
     public class SourceService : Service<Source>, ISourceService
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly IReader _reader;
 
-        public SourceService(DbContext context) : base(context) { }
+        public SourceService(DbContext context, IReader reader) : base(context)
+        {
+            _reader = reader;
+        }
 
         public async Task<Guid> AddAsync(Source source)
         {
             Logger.Info("Adding source {SourceUri}", source.Uri);
-            IEnumerable<Content> contents = await Reader.PullAsync(source);
+            IEnumerable<Content> contents = await _reader.PullAsync(source);
 
             using (var transaction = BeginTransaction())
             {

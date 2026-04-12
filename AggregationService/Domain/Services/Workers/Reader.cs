@@ -10,13 +10,13 @@
     using NLog;
     using AggregationService.Domain.Models;
 
-    internal static class Reader
+    internal class Reader : IReader
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly HttpClient _client;
-        private static readonly Parser _parser;
+        private readonly HttpClient _client;
+        private readonly Parser _parser;
 
-        static Reader()
+        public Reader()
         {
             _client = new HttpClient(
                 new HttpClientHandler
@@ -32,7 +32,7 @@
             _parser = new Parser();
         }
 
-        private static void ValidateUri(string uri)
+        private void ValidateUri(string uri)
         {
             if (!System.Uri.TryCreate(uri, UriKind.Absolute, out Uri parsedUri)
                 || (parsedUri.Scheme != System.Uri.UriSchemeHttp && parsedUri.Scheme != System.Uri.UriSchemeHttps))
@@ -42,7 +42,7 @@
             }
         }
 
-        public static async Task<IEnumerable<Content>> PullAsync(Source source)
+        public async Task<IEnumerable<Content>> PullAsync(Source source)
         {
             Logger.Info("Pulling content from source {SourceUri}", source.Uri);
             ValidateUri(source.Uri);
@@ -54,7 +54,7 @@
             }
         }
 
-        public static async Task<IEnumerable<Content>> ValidateAsync(Source source)
+        public async Task<IEnumerable<Content>> ValidateAsync(Source source)
         {
             if (!source.Expires.HasValue || source.Expires <= DateTime.Now)
             {
@@ -87,7 +87,7 @@
             return new List<Content>();
         }
 
-        private static void ValidateSource(Source source, HttpResponseMessage message)
+        private void ValidateSource(Source source, HttpResponseMessage message)
         {
             HttpContentHeaders headers = message.Content.Headers;
             DateTimeOffset? LastModified = headers.LastModified, Expires = headers.Expires;
